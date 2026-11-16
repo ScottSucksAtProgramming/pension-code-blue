@@ -1,0 +1,10 @@
+# Never commit the API key
+tiingo.key
+twelvedata.key
+.env
+
+# Runtime cache written by data.php
+cache.json
+cache.json.lock
+
+.DS_Store

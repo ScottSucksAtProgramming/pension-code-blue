@@ -1,0 +1,695 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pension Code Blue</title>
+<meta name="description" content="A live, completely unofficial guess at how much of New York's pension fund the stock market is eating today.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pension Code Blue">
+<meta property="og:description" content="Live NY State Common Retirement Fund DNR (Do Not Retire) Status. Unofficial, for entertainment.">
+<meta property="og:url" content="https://pension.poweredbyghosts.com/">
+<meta property="og:image" content="https://pension.poweredbyghosts.com/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230d1411%27/%3E%3Cpolyline points=%272,18 9,18 11,15 13,18 15,18 17,8 19,24 21,18 30,18%27 fill=%27none%27 stroke=%27%23ff6b5e%27 stroke-width=%272.6%27 stroke-linejoin=%27round%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0d1411">
+</head><body style="margin:0">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: a ticker tape across the top, then one narrow terminal-style column; the big number is the hero, the commentary feed is the fun. */
+:root{
+  --bg:#eef1ee; --panel:#f8faf8; --fg:#14201a; --muted:#5b6b62; --line:#cdd6cf;
+  --accent:#1f6f5c; --up:#13804f; --down:#c2362b; --tape:#14201a; --tapefg:#e4ece6; --warn:#a86a00;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1411; --panel:#141d19; --fg:#e4ece6; --muted:#8fa197; --line:#26332d;
+  --accent:#5cc7a6; --up:#45c98a; --down:#ff6b5e; --tape:#050806; --tapefg:#cfe0d6; --warn:#f0b54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1411; --panel:#141d19; --fg:#e4ece6; --muted:#8fa197; --line:#26332d;
+  --accent:#5cc7a6; --up:#45c98a; --down:#ff6b5e; --tape:#050806; --tapefg:#cfe0d6; --warn:#f0b54a; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.tape{background:var(--tape);color:var(--tapefg);overflow:hidden;white-space:nowrap;font-family:var(--mono);font-size:13px;padding-block:8px;
+  padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tape-inner{display:inline-block;padding-left:100%;animation:scroll var(--dur,60s) linear infinite}
+.tape-inner span{margin-right:36px}
+.tape .up{color:#45c98a}.tape .down{color:#ff6b5e}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.tape-inner{animation:none;padding-left:16px}}
+.wrap{max-width:640px;margin:0 auto;padding-block:22px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:20px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.dot.live{background:var(--up)} .dot.demo{background:var(--warn)}
+.demo-pill{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);border:1px solid var(--warn);border-radius:4px;padding:1px 6px}
+h1{font-family:var(--display);font-weight:600;font-size:18px;margin:0;text-wrap:balance}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(44px,13vw,76px);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 0}
+.chg{font-family:var(--mono);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;display:flex;gap:14px;flex-wrap:wrap}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--muted)}
+.sub{color:var(--muted);font-size:13px}
+.mast{border-bottom:1px solid var(--line);padding-bottom:16px}
+.mast-title{font-family:var(--display);font-weight:800;font-size:clamp(34px,9vw,52px);line-height:1;letter-spacing:-.02em;margin:0;color:var(--down)}
+.mast-sub{font-family:var(--mono);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--fg);margin:10px 0 0;font-weight:600}
+.mast-blurb{color:var(--muted);font-size:15px;margin:8px 0 0;max-width:60ch}
+.hero-label{font-family:var(--display);font-weight:600;font-size:16px;margin:8px 0 0;color:var(--muted)}
+.fullval{font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.fullval b{color:var(--fg);font-weight:600}
+.verdict{font-family:var(--display);font-weight:600;font-size:20px;text-wrap:balance;border-left:4px solid var(--muted);padding-left:12px}
+.verdict.down{border-color:var(--down);color:var(--fg)} .verdict.up{border-color:var(--up);color:var(--fg)}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 12px 6px}
+.chart svg{display:block;width:100%;height:auto}
+.chart .t{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.chart-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:6px;gap:8px;flex-wrap:wrap}
+.feed{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.feed h2,.holdings h2{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.feed ol{list-style:none;margin:0;padding:0}
+.feed li{padding:10px 12px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px}
+.feed li:last-child{border-bottom:0}
+.feed time{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px}
+.feed .empty{color:var(--muted);padding:12px}
+.holdings{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.hl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hl td,.hl th{padding:8px 12px;border-bottom:1px solid var(--line);text-align:right;font-size:14px}
+.hl th{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.hl td:first-child,.hl th:first-child{text-align:left;font-family:var(--mono);font-weight:600}
+.hl tr:last-child td{border-bottom:0}
+.whatif{display:flex;flex-direction:column;gap:8px}
+.whatif label{font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.whatif .out{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+details{border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:600}
+details p,details li{color:var(--muted);font-size:14px;max-width:65ch}
+details ul{padding-left:18px}
+.keyrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.keyrow input{flex:1 1 200px;min-width:0;font-family:var(--mono);font-size:13px;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:14px;padding:8px 14px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.disclaimer{font-size:12px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+a{color:var(--accent)}
+
+.disc-back{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.disc-back[hidden]{display:none}
+.disc{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:12px;max-width:440px;width:100%;padding:22px 20px;font-family:var(--body);line-height:1.45}
+.disc h2{font-family:var(--display);margin:0 0 10px;font-size:1.3rem}
+.disc p{margin:0 0 10px}
+.disc button{margin-top:6px;width:100%;padding:11px;border:0;border-radius:8px;background:var(--accent);color:var(--bg);font:600 1rem var(--body);cursor:pointer}
+.disc-foot{max-width:900px;margin:18px auto 28px;padding:0 16px;font:.8rem var(--body);color:var(--muted);text-align:center}
+.disc-foot a{color:inherit}
+.hl tbody tr[data-sym]{cursor:help}
+.hl tbody tr[data-sym]:hover,.hl tbody tr[data-sym]:focus{background:color-mix(in srgb,var(--fg) 6%,transparent);outline:none}
+.tip{position:fixed;z-index:50;max-width:290px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.18);pointer-events:none;display:none}
+.tip b{font-family:var(--mono)}
+.tip .tn{font-weight:600;margin-bottom:4px}
+.tip .tm{color:var(--muted);margin-top:6px;font-family:var(--mono);font-size:12px}
+.hint{font-size:12px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.hl-note{font-size:13px;color:var(--muted);padding:8px 12px 0;margin:0}
+.hl-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 12px}
+.hl-tools input{flex:1 1 180px;min-width:0;font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.hl-tools button{padding:7px 12px;white-space:nowrap}
+.hl-count{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.hl-wrap{overflow-x:auto}
+.hl-wrap.all{max-height:70vh;overflow-y:auto}
+.hl td small{display:block;font-family:var(--body);font-weight:400;font-size:12px;color:var(--muted);max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hl td .rk{color:var(--muted);font-weight:400;margin-right:6px}
+.pill{position:relative;display:inline-flex;align-items:center;gap:7px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--fg);cursor:help;line-height:1}
+.pill:focus{outline:none;border-color:var(--muted)}
+.pill-tip{position:absolute;left:0;top:calc(100% + 6px);z-index:40;white-space:nowrap;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;letter-spacing:0;text-transform:none;box-shadow:0 6px 24px rgba(0,0,0,.18);display:none}
+.pill:hover .pill-tip,.pill:focus .pill-tip,.pill.open .pill-tip{display:block}
+.views{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.views button{font:inherit;font-size:11px;background:none;border:0;color:var(--muted);padding:3px 10px;cursor:pointer}
+.views button+button{border-left:1px solid var(--line)}
+.views button.on{background:var(--fg);color:var(--panel)}
+.hl-tools .views button{font-size:12px;padding:5px 11px}
+.hl-sort{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.chart-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin:-2px 0 4px}
+.chart,.holdings,.feed,.whatif,.verdict,.pill,.views button,.hl tbody tr,.feed li{transition:border-color .15s,box-shadow .15s,background-color .15s,transform .15s}
+.whatif{border:1px solid transparent;border-radius:10px;padding:10px 12px;margin-inline:-12px}
+@media (hover:hover){
+  .chart:hover,.holdings:hover,.feed:hover{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+  .whatif:hover{border-color:var(--line);background:var(--panel)}
+  .verdict:hover{transform:translateX(3px)}
+  .pill:hover{border-color:var(--accent)}
+  .views button:not(.on):hover{color:var(--fg);background:color-mix(in srgb,var(--fg) 8%,transparent)}
+  .feed li:hover{background:color-mix(in srgb,var(--fg) 5%,transparent)}
+  .tape:hover .tape-inner{animation-play-state:paused}
+}
+.chart svg{cursor:crosshair;touch-action:pan-y}
+.chart .hl-line{stroke:var(--muted);stroke-dasharray:2 3}
+.chart .hl-box{fill:var(--panel);stroke:var(--line)}
+.chart .hl-txt{fill:var(--fg);font-family:var(--mono);font-size:11px}
+@media (prefers-reduced-motion:reduce){.verdict:hover{transform:none}}
+.topbar{position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.breaking{display:flex;align-items:stretch;background:var(--panel);border-bottom:1px solid var(--line);font-size:14px;min-height:34px;
+  padding-right:max(12px,env(safe-area-inset-right,0px))}
+.bn-tag{flex:none;display:flex;align-items:center;background:var(--down);color:#fff;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:0 10px 0 max(10px,env(safe-area-inset-left,0px))}
+.bn-text{flex:1;min-width:0;display:flex;align-items:center;padding:6px 12px;transition:opacity .35s}
+.bn-text.fade{opacity:0}
+@media (prefers-reduced-motion:reduce){.bn-text{transition:none}}
+.tape .tk{cursor:help;border-radius:4px;padding:1px 3px;margin-left:-3px}
+.tape .tk:hover{background:rgba(255,255,255,.12)}
+.tape.held .tape-inner{animation-play-state:paused}
+</style>
+
+<div class="topbar">
+<div class="tape" aria-hidden="true"><div class="tape-inner" id="tape"><span>Opening the trading floor…</span></div></div>
+<div class="breaking" aria-live="polite"><span class="bn-tag">Breaking</span><span class="bn-text" id="bnText">Waiting for the opening bell.</span></div>
+</div>
+
+<div class="wrap">
+  <header class="mast">
+    <h1 class="mast-title">Pension Code Blue</h1>
+    <p class="mast-sub">Live NY State Common Retirement Fund DNR (Do Not Retire) Status</p>
+    <p class="mast-blurb">A live, completely unofficial guess at how much of New York's pension fund the stock market is eating today. Your actual pension is fine. Your morale, unclear.</p>
+  </header>
+  <div>
+    <div class="eyebrow"><span class="pill" id="pill" tabindex="0" aria-describedby="pillTip"><span class="dot" id="dot"></span><span id="status">Loading</span><span class="pill-tip" id="pillTip" role="tooltip"></span></span></div>
+    <h2 class="hero-label">The fund's stock market money, estimated</h2>
+    <div class="big" id="value">$—</div>
+    <div class="chg" id="change"><span>—</span></div>
+    <div class="fullval" id="fullval"></div>
+    <div class="sub" id="asof"></div>
+  </div>
+
+  <div class="verdict" id="verdict">Checking vitals…</div>
+
+  <div class="chart">
+    <div class="chart-head"><span id="chartTitle">Today</span><span class="views" role="tablist" aria-label="Chart range"><button type="button" data-view="today" class="on" role="tab" aria-selected="true">Today</button><button type="button" data-view="1m" role="tab" aria-selected="false">1M</button><button type="button" data-view="1y" role="tab" aria-selected="false">1Y</button></span></div>
+    <div class="chart-sub" id="chartRange"></div>
+    <svg id="svg" viewBox="0 0 600 220" role="img" aria-label="Estimated fund value today"></svg>
+  </div>
+
+  <section class="feed" aria-live="polite">
+    <h2>Floor commentary</h2>
+    <ol id="feed"><li class="empty">Nothing to report yet.</li></ol>
+  </section>
+
+  <section class="holdings">
+    <h2>The fund's biggest US stock holdings</h2>
+    <p class="hl-note">Just the fund's 300 biggest US stocks, from its latest SEC filing. That's about 83% of its US stock money. It owns about 3,200 US stocks in all, plus plenty overseas, so this isn't the whole fund.</p>
+    <div class="hl-tools">
+      <input type="search" id="hlSearch" placeholder="Search a ticker or company" aria-label="Search the fund's US stocks" autocomplete="off">
+      <button type="button" class="ghost" id="hlAll" aria-expanded="false">Show all 300</button>
+      <span class="hl-sort">Sort <span class="views" id="hlSortBtns" role="group" aria-label="Sort the stock list"><button type="button" data-sort="value" class="on" aria-pressed="true">Fund $</button><button type="button" data-sort="move" aria-pressed="false">Biggest move</button><button type="button" data-sort="name" aria-pressed="false">A to Z</button></span></span>
+      <span class="hl-count" id="hlCount" aria-live="polite"></span>
+    </div>
+    <div class="hl-wrap" id="hlWrap"><table class="hl"><thead><tr><th>Stock</th><th>Move</th><th>Fund's $ today</th></tr></thead><tbody id="hold"></tbody></table></div>
+    <div class="hint">Hover or tap a stock for details.</div>
+    <div class="tip" id="tip" role="tooltip"></div>
+  </section>
+
+
+
+
+  <details>
+    <summary>How it's estimated</summary>
+    <p>New York's pension fund only gets an official value once every three months. The most recent one was $309.7 billion on June 30, 2026. About 39% of that money, roughly $122 billion, is invested in stocks of companies traded on public markets around the world. That stock money is the big number at the top of this page.</p>
+    <p>Since the fund doesn't publish a daily value, we fake one. We take that stock money and move it up or down with a global stock index fund (the iShares MSCI ACWI ETF, which holds thousands of companies worldwide). If that index is down 2% since June 30, we assume the fund's stocks are down 2% too. The rest of the fund (bonds, cash, real estate and private investments) is treated as if it never changes, which is why the full fund value moves less than the stock number.</p>
+    <p>The list of individual stocks covers the fund's 300 biggest US stocks. It uses the share counts the fund reported to the SEC for June 30, times today's price change. Those per-stock prices come from Tiingo, using trades on the IEX exchange, and they're just for show: they don't feed the big number. The houses, ambulances and paramedic salaries are rough Long Island prices, just for scale. It's a back-of-the-napkin guess: it ignores money paid in and out, dividends, and any buying or selling since June 30, and it says nothing about your actual pension, which is a guaranteed benefit that doesn't move with the market.</p>
+    <p>Sources: <a href="https://www.osc.ny.gov/press/releases/2026/08/dinapoli-state-pension-fund-valued-3097-billion-end-first-quarter">Comptroller's Q1 release</a>, the fund's SEC 13F filing. Prices from Tiingo, refreshed every few minutes.</p>
+  </details>
+
+</div>
+
+<script>
+// ===== Config: update when new official numbers come out =====
+const CONFIG = {
+  baseValue: 309.7e9, baseDate: "Jun 30, 2026", equityShare: 0.394,
+  proxy: "ACWI", proxyBase: 156.97,
+  lastClose: 156.53, lastCloseDate: "2026-11-12",
+  // The fund's top 300 US stocks from its 13F for the quarter ending Jun 30, 2026 (shares), in holdings.json.
+  holdingsUrl: "holdings.json", topN: 25, tapeN: 10,
+  units: { house:650e3, ambulance:350e3, medic:80e3, narcan:45, coffee:3, otHour:60, stretcher:40e3 },
+  dataUrl: "data.php",   // server script that caches prices for everyone; set "" to skip
+  pollMs: 180000
+};
+const EQ = CONFIG.baseValue * CONFIG.equityShare;
+const est = p => CONFIG.baseValue + EQ * (p / CONFIG.proxyBase - 1); // whole fund
+const estEq = p => EQ * (p / CONFIG.proxyBase); // public stock slice only
+const $ = id => document.getElementById(id);
+const fmtBig = v => "$" + (v/1e9).toFixed(1) + "B";
+const fmtMoney = v => { const a=Math.abs(v); return "$" + (a>=1e9?(a/1e9).toFixed(2)+"B":a>=1e6?(a/1e6).toFixed(0)+"M":(a/1e3).toFixed(0)+"K"); };
+const fmtSigned = v => (v>=0?"+":"−") + fmtMoney(v);
+const fmtPct = v => (v>=0?"+":"−") + Math.abs(v).toFixed(2) + "%";
+const cls = v => v>0.0001?"up":v<-0.0001?"down":"flat";
+const n = v => { const r = Math.round(v); return r.toLocaleString(); };
+const clock = d => d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+
+// ===== Commentary =====
+function units(d){ const a=Math.abs(d), u=CONFIG.units;
+  return { houses:n(a/u.house), ambulances:n(a/u.ambulance), medics:n(a/u.medic),
+    narcan:n(a/u.narcan), coffees:n(a/u.coffee), othours:n(a/u.otHour), stretchers:n(a/u.stretcher) }; }
+
+// Picks at random but avoids repeating the last few lines from the same list.
+const recent = new WeakMap();
+function pick(a){
+  const r = recent.get(a) || []; const pool = a.map((_,i)=>i).filter(i=>!r.includes(i));
+  const i = (pool.length?pool:a.map((_,i)=>i))[Math.floor(Math.random()*(pool.length||a.length))];
+  r.push(i); while(r.length > Math.min(4, a.length-1)) r.shift(); recent.set(a, r); return a[i];
+}
+
+const STOCK_DOWN = [
+  "{name} just dropped {pct}. That move cost the fund {money}, or {houses} Suffolk houses. Keep renting.",
+  "{name} down {pct}. The fund is out {money}. That's {ambulances} ambulances. Response times may vary.",
+  "{name} slid {pct}. {money} gone, which is {medics} paramedic salaries, or one hospital administrator.",
+  "{name} down {pct}. Somewhere a guy on CNBC is saying it's a buying opportunity. The fund is down {money}.",
+  "{name} is down {pct}. That's {houses} houses the fund will never own. Neither will you.",
+  "{name} lost {pct}. The fund just dropped {money}. Have you tried turning it off and on again?",
+  "{name} down {pct}. That's {narcan} doses of Narcan. Unfortunately it doesn't work on stocks.",
+  "{name} down {pct}. {money} lost, or {stretchers} power stretchers. Lift with your legs.",
+  "{name} down {pct}. The fund lost {money}, which is {coffees} gas station coffees. Same taste as this chart.",
+  "{name} is down {pct}. Patient is alert and oriented to nothing. Fund down {money}.",
+  "{name} down {pct}. That's {othours} hours of mandatory overtime, gone. You'll still be working them."
+];
+const STOCK_UP = [
+  "{name} up {pct}, so the fund made {money}. Don't get excited, your pension didn't change. It never does.",
+  "{name} bounced {pct}. That's {ambulances} ambulances back. None will be sent to your post.",
+  "{name} +{pct}. The fund is up {money}. Overtime is still mandatory.",
+  "{name} up {pct}. {money} back. Admin will call it a team effort and order pizza for themselves.",
+  "{name} rallied {pct}. That's {stretchers} stretchers. You'll still get the one with the bad wheel.",
+  "{name} up {pct}. Positive pulse on one stock. Don't stop compressions yet."
+];
+// Stock-specific lines, used about half the time when that stock moves.
+const SPECIAL_DOWN = {
+  NVDA: ["Nvidia down {pct}. The AI that was supposed to replace you just cost the fund {money}.",
+         "Nvidia down {pct}. {money} gone. Turns out you can't eat GPUs."],
+  TSLA: ["Tesla down {pct}. The fund lost {money}. At least it isn't on fire. Yet.",
+         "Tesla down {pct}. {money} gone. Full self-driving, straight off a cliff."],
+  AAPL: ["Apple down {pct}. {money} gone. Your phone will now slow down out of solidarity."],
+  META: ["Meta down {pct}. The fund lost {money}. Zuck will be fine. You are not Zuck."],
+  AMZN: ["Amazon down {pct}. {money} lost. Package delivered to wrong pension."],
+  MSFT: ["Microsoft down {pct}. The fund lost {money}. Please wait while Windows updates your retirement."],
+  GOOG: ["The other Alphabet is down {pct}. Yes, the fund owns both. Yes, they both went down."],
+  GOOGL:["Alphabet down {pct}. {money} gone. Googling \"is my pension okay\" won't help."],
+  MU:   ["Micron down {pct}. Memory chips down {money}. The fund would like to forget today."],
+  AVGO: ["Broadcom down {pct}. Nobody knows what Broadcom makes, but it cost the fund {money}."]
+};
+const FUND_DOWN_MILD = [
+  "The fund is down {money} today. That's {medics} paramedics for a year. Or one consultant to say we need fewer paramedics.",
+  "Today's loss would buy {houses} Suffolk houses. Property taxes not included.",
+  "Down {money}. Still more than your 401(k). Probably.",
+  "Down {money}. Mild tachycardia. Nothing a fluid bolus won't fix.",
+  "The fund's out {money}. That's {narcan} Narcan doses. The market is not responding to verbal stimuli."
+];
+const FUND_DOWN_BAD = [
+  "Running total: {money} down. In ambulances, {ambulances}. In excuses, infinite.",
+  "{money} down on the day. Somebody check the Comptroller's pulse.",
+  "{money} gone. That's {ambulances} ambulances. Every post in Suffolk could have two. They won't.",
+  "Down {money}. Requesting ALS intercept for the S&P.",
+  "{money} lost. If this were a patient we'd be calling medical control.",
+  "Fund down {money}. That's {othours} OT hours. Somehow you'll still be held over."
+];
+const FUND_DOWN_AWFUL = [
+  "{money} down. Starting compressions on the global economy. Somebody get the LUCAS.",
+  "The fund has lost {money}. That's {houses} Suffolk houses. Basically Nassau.",
+  "{money} gone. Pushing 1 of epi into Wall Street. No change.",
+  "Down {money}. Bloomberg anchors are now speaking in short, shallow breaths.",
+  "{money} lost. This is the part of the call where someone asks if there's a DNR."
+];
+const FUND_UP = [
+  "The fund is up {money} today. Your raise is still 2%.",
+  "Up {money}. That's {ambulances} ambulances. They'll go to the place that already has new ones.",
+  "Green day, {money} up. Enjoy it, it won't show up on your check.",
+  "Up {money}. That's {coffees} coffees. You still have to buy your own.",
+  "Fund up {money}. Patient improved en route. Document it before it changes."
+];
+const FLAT = [
+  "Markets are flat. Disappointing. Come back when something's on fire.",
+  "Nothing's happening. Like a Tuesday 0300 post, but with Bloomberg.",
+  "Flatline. On the monitor that's bad. Here it's just boring.",
+  "No change. The market is sitting in triage, waiting to be seen."
+];
+const NEW_LOW = [
+  "New low of the day: down {pct}. Patient is deteriorating.",
+  "Fresh low, down {pct}. Upgrading to priority 1.",
+  "Down {pct}, worst of the day so far. Get the bag-valve mask."
+];
+const ROSC = [
+  "Bounce off the lows. We have ROSC! Don't celebrate, they always re-arrest.",
+  "The fund's crawling back. Pulses are weak but present.",
+  "Off the lows. The market sat up and asked what happened. Nobody knows."
+];
+const LAZARUS = ["The fund went from red to green. Lazarus has entered the chat.",
+  "Back in the green after that. Cancel the coroner."];
+const MILESTONES = [ // first time the day's loss crosses each line
+  [1e9,  "The fund just crossed $1 billion in losses today. One billion. That's a lot of tourniquets."],
+  [2.5e9,"$2.5 billion down. At this point it's a mass casualty incident. Start the triage tags."],
+  [5e9,  "$5 billion gone today. Notify the receiving hospital: the economy is coming in hot."],
+  [10e9, "$10 billion down. The Comptroller has been seen breathing into a paper bag."],
+  [20e9, "$20 billion. Okay, this one isn't funny anymore. It's still a little funny."]
+];
+
+function fill(t, o){ return t.replace(/\{(\w+)\}/g, (_,k)=>o[k] ?? ""); }
+
+// Verdict: one line per severity tier, kept stable until the tier changes.
+const VERDICTS = [
+  [-5,  "down", ["Call it. Time of death: {time}.", "Asystole confirmed in two leads. Time of death: {time}.", "We've done everything we could. Time of death: {time}."]],
+  [-3,  "down", ["Code yellow. The fund is circling the drain.", "Patient is crashing. Call it in as a priority.", "Pressures are tanking. Hang a second bag."]],
+  [-1.5,"down", ["Seatbelt sign is on. Stocks are getting bounced.", "Patient is pale, cool and diaphoretic.", "Not great. Not a code. Not great."]],
+  [-0.5,"down", ["Mild nausea. Nothing a little Zofran won't fix.", "Minor injuries. Patient refusing transport.", "A little shaky. Probably just needs a juice box."]],
+  [0.5, "flat", ["Vitals stable. Boring, honestly.", "Within normal limits. Go back to sleep.", "Nothing to see here. Clear the scene."]],
+  [2,   "up",   ["Green day. Don't spend it, it's not yours.", "Patient improving. Do not tell admin, they'll cut staffing.", "Stocks are up. Your paycheck is not."]],
+  [Infinity,"up",["Ripping higher. Someone at the Comptroller's office is buying a boat.", "Big green day. Somewhere a hedge fund guy is high-fiving himself.", "Moon mission. Nothing about your job changes."]]
+];
+let verdictTier = null, verdictText = "";
+function verdictFor(pct){
+  const i = VERDICTS.findIndex(([lim])=>pct < lim || (lim===-5 && pct<=-5));
+  const [, c, texts] = VERDICTS[i];
+  if(i !== verdictTier){ verdictTier = i; verdictText = pick(texts).replace("{time}", clock(new Date())); }
+  return [verdictText, c];
+}
+
+const feedItems = [];
+const said = new Map(); // sym -> last pct bucket commented on
+let ev = {};
+function resetEvents(){ ev = {low:0, rosc:false, wasDown:false, greenSaid:false, miles:new Set()}; verdictTier = null; }
+resetEvents();
+function addLine(text){ feedItems.unshift({t:new Date(), text}); feedItems.length = Math.min(feedItems.length, 12); renderFeed(); bnIndex = 0; showBanner(); }
+// Breaking banner: newest comment first, then cycles the latest few every 7 seconds.
+let bnIndex = 0, bnTimer = null;
+function showBanner(){
+  const el = $("bnText"), items = feedItems.slice(0, 5); if(!items.length) return;
+  const text = items[bnIndex % items.length].text;
+  el.classList.add("fade");
+  setTimeout(()=>{ el.textContent = text; el.classList.remove("fade"); }, 350);
+  clearInterval(bnTimer); bnTimer = setInterval(()=>{ bnIndex++; showBanner(); }, 7000);
+}
+function renderFeed(){
+  $("feed").innerHTML = feedItems.length ? feedItems.map(i=>`<li><time>${clock(i.t)}</time><span></span></li>`).join("") : '<li class="empty">Nothing to report yet.</li>';
+  [...$("feed").querySelectorAll("li span")].forEach((s,i)=>s.textContent = feedItems[i].text);
+}
+
+// Day-shape events: milestones, new lows, bounces, going green.
+function eventLine(state){
+  const p = state.fundPct, loss = -state.fundDelta;
+  for(const [amt, text] of MILESTONES){ if(loss >= amt && !ev.miles.has(amt)){ ev.miles.add(amt); return text; } }
+  if(p < -1 && p < ev.low - 0.4){ const first = ev.low===0; ev.low = p; ev.rosc = false; if(!first) return fill(pick(NEW_LOW), {pct:Math.abs(p).toFixed(2)+"%"}); }
+  if(p < ev.low) ev.low = p;
+  if(ev.low < -1.5 && !ev.rosc && p - ev.low > 1){ ev.rosc = true; return pick(ROSC); }
+  if(p < -1) ev.wasDown = true;
+  if(ev.wasDown && p > 0.1 && !ev.greenSaid){ ev.greenSaid = true; return pick(LAZARUS); }
+  return null;
+}
+
+function commentate(state){
+  const e = eventLine(state);
+  if(e){ addLine(e); return; }
+  // Pick the stock with the biggest new move since we last talked about it
+  let best=null;
+  for(const h of state.rows.slice(0, CONFIG.topN)){
+    const bucket = Math.trunc(h.pct/1.5); // speak up every ~1.5% move
+    const last = said.get(h.sym);
+    if(bucket!==0 && bucket!==last && (!best || Math.abs(h.dollars)>Math.abs(best.dollars))) best = {...h, bucket};
+  }
+  if(best){
+    said.set(best.sym, best.bucket);
+    const o = {name:best.name, pct:Math.abs(best.pct).toFixed(2)+"%", money:fmtMoney(best.dollars), ...units(best.dollars)};
+    const special = best.dollars<0 && SPECIAL_DOWN[best.sym];
+    addLine(fill(special && Math.random()<0.5 ? pick(special) : pick(best.dollars<0?STOCK_DOWN:STOCK_UP), o));
+  }
+  // Fund-level line every few updates
+  if(!best || Math.random()<0.35){
+    const d = state.fundDelta, p = state.fundPct, o = {money:fmtMoney(d), ...units(d)};
+    const list = Math.abs(p)<0.2 ? FLAT : d>0 ? FUND_UP : p<=-3 ? FUND_DOWN_AWFUL : p<=-1.2 ? FUND_DOWN_BAD : FUND_DOWN_MILD;
+    addLine(fill(pick(list), o));
+  }
+}
+
+// ===== Rendering =====
+let HOLD = [], allRows = [], showAll = false, query = "", sortBy = "value";
+const SORTS = { value:(x,y)=>x.rank-y.rank, move:(x,y)=>Math.abs(y.pct)-Math.abs(x.pct) || x.rank-y.rank, name:(x,y)=>x.name.localeCompare(y.name, "en", {sensitivity:"base"}) || x.rank-y.rank };
+const esc = t => String(t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderTable(){
+  const q = query.trim().toLowerCase();
+  let list = q ? allRows.filter(r=>r.sym.toLowerCase().includes(q) || r.name.toLowerCase().includes(q))
+                 : showAll ? allRows : allRows.slice(0, CONFIG.topN);
+  list = list.slice().sort(SORTS[sortBy]); // re-order what's showing; rank stays the fund-value rank
+  const msg = t => `<tr><td colspan="3" style="text-align:left;font-family:var(--body);font-weight:400;color:var(--muted)">${t}</td></tr>`;
+  $("hold").innerHTML = !allRows.length ? msg("Stock prices show up once live data loads.")
+    : !list.length ? msg("None of the fund's top 300 US stocks match that.")
+    : list.map(r=>`<tr data-sym="${esc(r.sym)}" tabindex="0"><td><span class="rk">${r.rank}</span>${esc(r.sym)}<small>${esc(r.name)}</small></td><td class="${cls(r.pct)}">${fmtPct(r.pct)}</td><td class="${cls(r.dollars)}">${fmtSigned(r.dollars)}</td></tr>`).join("");
+  const total = allRows.length;
+  $("hlAll").hidden = !!q || total <= CONFIG.topN;
+  $("hlAll").textContent = showAll ? `Show top ${CONFIG.topN}` : `Show all ${total}`;
+  $("hlAll").setAttribute("aria-expanded", String(showAll));
+  $("hlWrap").classList.toggle("all", showAll || !!q);
+  $("hlCount").textContent = !total ? "" : q ? `${list.length} match${list.length===1?"":"es"}` : `Showing ${list.length} of ${total}`;
+}
+let curValue = null, curEq = null;
+function render(data, mode){
+  const a = data.acwi, v = est(a.price), prevV = est(a.prev);
+  const d = v - prevV, dp = d/prevV*100;            // whole fund
+  const ev = estEq(a.price), evPrev = estEq(a.prev);
+  const ep = (ev/evPrev - 1)*100;                    // stock slice
+  curValue = v;
+  $("value").textContent = fmtBig(ev);
+  $("change").innerHTML = `<span class="${cls(d)}">${fmtSigned(d)}</span><span class="${cls(d)}">${fmtPct(ep)}</span><span class="flat">today</span>`;
+  $("fullval").innerHTML = `Full fund value: <b>${fmtBig(v)}</b> <span class="${cls(d)}">${fmtPct(dp)}</span>`;
+  $("asof").textContent = `Updated ${clock(new Date())}${data.delayed?", prices delayed":""}.`;
+  $("status").textContent = mode==="live" ? (data.marketOpen ? "Live" : "Market closed") : "Last saved close";
+  $("dot").className = "dot " + (mode==="live" && data.marketOpen ? "live" : "");
+  const [vt, vc] = verdictFor(ep); const ve=$("verdict"); ve.textContent = vt; ve.className = "verdict " + vc;
+
+  // holdings: biggest first by what the fund's stake is worth right now
+  const rows = HOLD.map(h=>{ const q=data.stocks?.[h.sym]; if(!q || !(q.prev>0)) return null;
+    const pct=(q.price/q.prev-1)*100, dollars=h.shares*(q.price-q.prev); return {...h, pct, dollars, price:q.price, prev:q.prev, held:h.shares*q.price}; })
+    .filter(Boolean).sort((x,y)=>y.held-x.held);
+  rows.forEach((r,i)=>r.rank=i+1);
+  tipRows = Object.fromEntries(rows.map(r=>[r.sym,r]));
+  allRows = rows; renderTable();
+
+  // tape: top 10 only
+  const bits = [`<span>STOCKS EST ${fmtBig(ev)} <b class="${cls(d)}">${fmtPct(ep)}</b></span>`, `<span>FULL FUND ${fmtBig(v)} <b class="${cls(d)}">${fmtPct(dp)}</b></span>`,
+    `<span>${CONFIG.proxy} ${a.price.toFixed(2)} <b class="${cls(a.price-a.prev)}">${fmtPct((a.price/a.prev-1)*100)}</b></span>`]
+    .concat(rows.slice(0, CONFIG.tapeN).map(r=>`<span class="tk" data-sym="${r.sym}">${r.sym} <b class="${cls(r.pct)}">${fmtPct(r.pct)}</b></span>`));
+  const tape=$("tape"); tape.innerHTML = bits.join(""); tape.style.setProperty("--dur", Math.max(30, bits.length*7)+"s");
+
+  // chart
+  lastData = data;
+  drawView();
+  curEq = ev;
+  return {rows, fundDelta:d, fundPct:dp};
+}
+
+function drawChart(points, opts){
+  const svg=$("svg"), W=600, H=220, L=56, R=10, T=12, B=26;
+  const vs=points.map(p=>p.v);
+  let lo=Math.min(...vs, opts.ref??Infinity), hi=Math.max(...vs, opts.ref??-Infinity);
+  const pad=(hi-lo)*0.12||hi*0.001; lo-=pad; hi+=pad;
+  const x=i=>L+(W-L-R)*i/(points.length-1), y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+  const last=vs[vs.length-1], color=opts.ref!=null?(last>=opts.ref?"var(--up)":"var(--down)"):"var(--accent)";
+  const path=points.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.v).toFixed(1)).join(" ");
+  const area=path+` L${x(points.length-1).toFixed(1)} ${H-B} L${L} ${H-B} Z`;
+  let grid=""; for(let k=0;k<4;k++){ const gv=lo+(hi-lo)*(k+0.5)/4, gy=y(gv);
+    grid+=`<line x1="${L}" x2="${W-R}" y1="${gy}" y2="${gy}" stroke="var(--line)"/><text x="${L-6}" y="${gy+3}" text-anchor="end" class="t">${fmtBig(gv)}</text>`; }
+  const ref=opts.ref!=null?`<line x1="${L}" x2="${W-R}" y1="${y(opts.ref)}" y2="${y(opts.ref)}" stroke="var(--muted)" stroke-dasharray="3 4"/><text x="${W-R}" y="${y(opts.ref)-4}" text-anchor="end" class="t">${opts.refLabel||"yesterday"}</text>`:"";
+  const labs=[0,Math.floor((points.length-1)/2),points.length-1].map(i=>`<text x="${x(i)}" y="${H-8}" text-anchor="${i==0?'start':i==points.length-1?'end':'middle'}" class="t">${points[i].label}</text>`).join("");
+  chartGeo = {points, x, y, L, R, W, H, T, B, color};
+  svg.innerHTML=`<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".22"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>${grid}${ref}<path d="${area}" fill="url(#g)"/><path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/><circle cx="${x(points.length-1)}" cy="${y(last)}" r="4" fill="${color}"/>${labs}<g id="hov" style="display:none"><line class="hl-line" y1="${T}" y2="${H-B}"/><circle r="4" fill="${color}" stroke="var(--panel)" stroke-width="2"/><rect class="hl-box" rx="5" height="20"/><text class="hl-txt"></text></g>`;
+}
+
+
+
+// chart hover readout (mouse or finger drag)
+let chartGeo = null;
+function chartHover(clientX){
+  const g = chartGeo, hov = document.getElementById("hov"); if(!g || !hov) return;
+  const r = $("svg").getBoundingClientRect(), vx = (clientX - r.left) * g.W / r.width;
+  const n = g.points.length, i = Math.max(0, Math.min(n-1, Math.round((vx - g.L) / (g.W - g.L - g.R) * (n-1))));
+  const p = g.points[i], cx = g.x(i), cy = g.y(p.v);
+  hov.style.display = "";
+  const ln = hov.querySelector("line"); ln.setAttribute("x1", cx); ln.setAttribute("x2", cx);
+  const c = hov.querySelector("circle"); c.setAttribute("cx", cx); c.setAttribute("cy", cy);
+  const t = hov.querySelector("text"); t.textContent = `${p.label}  ${fmtBig(p.v)}`;
+  const tw = t.textContent.length * 6.7 + 12, bx = Math.min(Math.max(g.L, cx - tw/2), g.W - g.R - tw), by = Math.max(0, cy - 30);
+  const box = hov.querySelector("rect"); box.setAttribute("x", bx); box.setAttribute("y", by); box.setAttribute("width", tw);
+  t.setAttribute("x", bx + 6); t.setAttribute("y", by + 14);
+}
+const chartOut = () => { const h = document.getElementById("hov"); if(h) h.style.display = "none"; };
+$("svg").addEventListener("mousemove", e=>chartHover(e.clientX));
+$("svg").addEventListener("mouseleave", chartOut);
+$("svg").addEventListener("touchstart", e=>chartHover(e.touches[0].clientX), {passive:true});
+$("svg").addEventListener("touchmove", e=>chartHover(e.touches[0].clientX), {passive:true});
+$("svg").addEventListener("touchend", ()=>setTimeout(chartOut, 1500));
+
+// chart range: Today (default), 1M, 1Y
+let chartView = "today", lastData = null;
+const shortDate = iso => new Date(iso+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+const shortMonth = iso => new Date(iso+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",year:"2-digit",timeZone:"UTC"});
+function drawView(){
+  const data = lastData; if(!data) return;
+  const a = data.acwi, svg = $("svg");
+  if(chartView==="today"){
+    $("chartTitle").textContent = "Stock slice today";
+    if(a.series && a.series.length>1){
+      $("chartRange").textContent = a.series[0].label + " → " + a.series[a.series.length-1].label;
+      drawChart(a.series.map(s=>({v:estEq(s.p), label:s.label})), {ref: estEq(a.prev)});
+    } else { $("chartRange").textContent = ""; svg.innerHTML = `<text x="300" y="110" text-anchor="middle" class="t">Intraday chart appears once live data loads</text>`; }
+    return;
+  }
+  const n = chartView==="1m" ? 22 : 252, daily = (data.daily||[]).slice();
+  const todayIso = new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());
+  if(daily.length && a.price && daily[daily.length-1].d !== todayIso && data.marketOpen) daily.push({d:todayIso, p:a.price});
+  else if(daily.length && daily[daily.length-1].d === todayIso && a.price) daily[daily.length-1] = {d:todayIso, p:a.price};
+  const pts = daily.slice(-(n+1));
+  $("chartTitle").textContent = chartView==="1m" ? "Stock slice, past month" : "Stock slice, past year";
+  if(pts.length < 3){ $("chartRange").textContent = ""; svg.innerHTML = `<text x="300" y="110" text-anchor="middle" class="t">Longer history appears once the daily data loads</text>`; return; }
+  const fmt = chartView==="1m" ? shortDate : shortMonth;
+  const first = estEq(pts[0].p), last = estEq(pts[pts.length-1].p);
+  const rd = chartView==="1y" ? (iso=>new Date(iso+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"})) : shortDate;
+  $("chartRange").textContent = `${rd(pts[0].d)} → ${rd(pts[pts.length-1].d)}: ${fmtSigned(last-first)} (${fmtPct((last/first-1)*100)})`;
+  drawChart(pts.map(x=>({v:estEq(x.p), label:fmt(x.d)})), {ref:first, refLabel: chartView==="1m" ? "a month ago" : "a year ago"});
+}
+document.querySelectorAll(".chart .views button").forEach(b=>b.addEventListener("click", ()=>{
+  chartView = b.dataset.view;
+  document.querySelectorAll(".chart .views button").forEach(x=>{ const on = x===b; x.classList.toggle("on", on); x.setAttribute("aria-selected", on); });
+  drawView();
+}));
+
+// market open/close countdown for the status pill (9:30 to 4:00 ET, NYSE holidays and 1 PM early closes)
+// Source: NYSE Group 2026-2028 holiday calendar. Add 2029 when NYSE publishes it.
+const HOLIDAYS = new Set(["2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25","2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
+  "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31","2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24",
+  "2028-01-17","2028-02-21","2028-04-14","2028-05-29","2028-06-19","2028-07-04","2028-09-04","2028-11-23","2028-12-25"]);
+const EARLY = new Set(["2026-11-27","2026-12-24","2027-11-26","2028-07-03","2028-11-24"]);
+const HOLIDAY_NAMES = {"01-01":"New Year's Day","07-03":"Independence Day","07-04":"Independence Day","07-05":"Independence Day","12-24":"Christmas","12-25":"Christmas","06-18":"Juneteenth","06-19":"Juneteenth"};
+function nyNow(){
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric",second:"numeric",hourCycle:"h23"}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  return {y:+p.year, m:+p.month, d:+p.day, secs:(+p.hour)*3600 + (+p.minute)*60 + (+p.second)};
+}
+function fmtDur(sec){
+  const m = Math.max(1, Math.ceil(sec/60)), d = Math.floor(m/1440), h = Math.floor(m%1440/60), mm = m%60;
+  return d ? `${d}d ${h}h` : h ? `${h}h ${mm}m` : `${mm}m`;
+}
+function dayInfo(n, k){ // k days after today's NY date
+  const dt = new Date(Date.UTC(n.y, n.m-1, n.d+k)), iso = dt.toISOString().slice(0,10), dow = dt.getUTCDay();
+  return {iso, dow, trading: dow>=1 && dow<=5 && !HOLIDAYS.has(iso), close: EARLY.has(iso) ? 13*3600 : 16*3600};
+}
+function marketCountdown(){
+  const n = nyNow(), OPEN = 9.5*3600, today = dayInfo(n, 0);
+  if(today.trading && n.secs>=OPEN && n.secs<today.close)
+    return `Market closes in ${fmtDur(today.close-n.secs)} (${today.close===13*3600?"1:00 PM ET, early close":"4:00 PM ET"})`;
+  let k = (today.trading && n.secs<OPEN) ? 0 : 1, day;
+  for(;; k++){ day = dayInfo(n, k); if(day.trading) break; }
+  const until = k*86400 + OPEN - n.secs;
+  const when = k===0 ? "today" : k===1 ? "tomorrow" : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][day.dow];
+  const hol = HOLIDAYS.has(today.iso) ? `Closed today for ${today.iso.slice(5)==="11-26"||today.iso.slice(5)==="11-25"||today.iso.slice(5)==="11-23"?"Thanksgiving":(HOLIDAY_NAMES[today.iso.slice(5)]||"a market holiday")}. ` : "";
+  return `${hol}Market opens in ${fmtDur(until)} (${when}, 9:30 AM ET)`;
+}
+function updatePill(){ $("pillTip").textContent = marketCountdown(); }
+updatePill(); setInterval(updatePill, 30000);
+$("pill").addEventListener("click", e=>{ updatePill(); $("pill").classList.toggle("open"); });
+document.addEventListener("click", e=>{ if(!e.target.closest("#pill")) $("pill").classList.remove("open"); });
+
+// stock tooltips (hover on desktop, tap on phones)
+let tipRows = {}, tipSym = null;
+const tipMoney = v => v>=1e9 ? "$"+(v/1e9).toFixed(1)+"B" : "$"+Math.round(v/1e6)+"M";
+const fmtShares = v => v>=1e6 ? (v/1e6).toFixed(1)+"M" : v>=1e3 ? Math.round(v/1e3)+"K" : String(v);
+const fmtPx = v => "$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function showTip(tr){
+  const r = tipRows[tr.dataset.sym], tip = $("tip"); if(!r) return;
+  const held = r.shares*r.price, share = curValue ? held/curValue*100 : null;
+  tip.innerHTML = `<div class="tn">${esc(r.name)} <b>${esc(r.sym)}</b></div>${r.desc?esc(r.desc):""}`
+    + `<div class="tm">Fund owns ~${fmtShares(r.shares)} shares, worth ~${tipMoney(held)}${share!=null?` (${share.toFixed(2)}% of the fund)`:""}<br>`
+    + `Yesterday's close ${fmtPx(r.prev)} → now <span class="${cls(r.pct)}">${fmtPx(r.price)} (${fmtPct(r.pct)})</span></div>`;
+  tip.style.display = "block"; tipSym = r.sym;
+  const b = tr.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+  let left = Math.min(Math.max(8, b.left + 12), innerWidth - w - 8);
+  let top = b.bottom + 6; if(top + h > innerHeight - 8) top = Math.max(8, b.top - h - 6);
+  tip.style.left = left+"px"; tip.style.top = top+"px";
+}
+function hideTip(){ $("tip").style.display = "none"; tipSym = null; }
+const holdEl = $("hold");
+holdEl.addEventListener("mouseover", e=>{ const tr=e.target.closest("tr[data-sym]"); if(tr && matchMedia("(hover:hover)").matches) showTip(tr); });
+holdEl.addEventListener("mouseleave", ()=>{ if(matchMedia("(hover:hover)").matches) hideTip(); });
+holdEl.addEventListener("focusin", e=>{ const tr=e.target.closest("tr[data-sym]"); if(tr) showTip(tr); });
+holdEl.addEventListener("focusout", hideTip);
+holdEl.addEventListener("click", e=>{ const tr=e.target.closest("tr[data-sym]"); if(!tr) return;
+  if(tipSym===tr.dataset.sym && !matchMedia("(hover:hover)").matches){ hideTip(); tr.blur(); } else showTip(tr); });
+addEventListener("scroll", ()=>{ if(tipSym) hideTip(); }, {passive:true});
+$("hlWrap").addEventListener("scroll", ()=>{ if(tipSym) hideTip(); }, {passive:true});
+$("hlSearch").addEventListener("input", e=>{ query = e.target.value; hideTip(); renderTable(); });
+$("hlSortBtns").addEventListener("click", e=>{ const b=e.target.closest("button[data-sort]"); if(!b) return;
+  sortBy = b.dataset.sort; hideTip();
+  $("hlSortBtns").querySelectorAll("button").forEach(x=>{ const on = x===b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", String(on)); });
+  renderTable(); });
+$("hlAll").addEventListener("click", ()=>{ showAll = !showAll; hideTip(); renderTable();
+  if(!showAll) $("hlWrap").scrollTop = 0; });
+// same tooltips on the ticker's stock symbols (hover on desktop; tap pauses the ticker on phones)
+const tapeEl = $("tape"), tapeBox = tapeEl.parentElement;
+tapeEl.addEventListener("mouseover", e=>{ const t=e.target.closest(".tk"); if(t && matchMedia("(hover:hover)").matches) showTip(t); });
+tapeEl.addEventListener("mouseout", e=>{ const t=e.target.closest(".tk"); if(t && !t.contains(e.relatedTarget) && matchMedia("(hover:hover)").matches) hideTip(); });
+tapeBox.addEventListener("click", e=>{ const t=e.target.closest(".tk");
+  if(!t || tipSym===t.dataset.sym){ hideTip(); tapeBox.classList.remove("held"); return; }
+  tapeBox.classList.add("held"); showTip(t); });
+document.addEventListener("click", e=>{ if(!e.target.closest(".tape")){ tapeBox.classList.remove("held"); if(!e.target.closest("#hold")) hideTip(); } });
+
+// ===== Data sources =====
+
+async function fromServer(){
+  if(!CONFIG.dataUrl) throw new Error("no server");
+  const r = await fetch(CONFIG.dataUrl, {cache:"no-store"}); if(!r.ok) throw new Error("server "+r.status);
+  return r.json(); // same shape the page uses; see data.php
+}
+
+// ===== Boot =====
+let liveTimer=null;
+function stopLive(){ if(liveTimer){clearInterval(liveTimer); liveTimer=null;} }
+function staticView(){
+  render({acwi:{price:CONFIG.lastClose, prev:CONFIG.lastClose, series:null}, stocks:{}}, "static");
+  $("change").innerHTML=`<span class="flat">No live prices here</span>`;
+  $("asof").textContent=`Based on the ${CONFIG.proxy} close on ${CONFIG.lastCloseDate}.`;
+  $("verdict").textContent="No live feed right now. Patient is being reassessed.";
+}
+async function poll(){
+  let data=null, mode="live";
+  try{ data=await fromServer(); }catch(e){ data=null; }
+  if(!data){ return false; }
+  const st=render(data, mode); commentate(st); return true;
+}
+async function loadHoldings(){
+  try{ const r = await fetch(CONFIG.holdingsUrl); if(r.ok){ const j = await r.json(); if(Array.isArray(j)) HOLD = j; } }catch(e){}
+}
+async function boot(){
+  stopLive();
+  if(!HOLD.length) await loadHoldings();
+  const ok=await poll();
+  if(!ok) staticView();
+  liveTimer=setInterval(poll, CONFIG.pollMs); // keep retrying if the feed was down
+}
+boot();
+</script>
+
+
+<p class="disc-foot">For entertainment only. Unofficial, not affiliated with New York State, and not financial advice. Numbers are rough guesses. <a href="#" id="discAgain">Read the disclaimer</a></p>
+<p class="disc-foot">© 2026 Pension Code Blue by <a href="https://github.com/ScottSucksAtProgramming" target="_blank" rel="noopener">ScottSucksAtProgramming</a> · Market data from <a href="https://www.tiingo.com" target="_blank" rel="noopener">Tiingo</a>; prices can lag by several minutes.</p>
+
+<div class="disc-back" id="discBack" hidden role="dialog" aria-modal="true" aria-labelledby="discTitle">
+  <div class="disc">
+    <h2 id="discTitle">Before you panic</h2>
+    <p>This site is a joke, built for entertainment. It is not affiliated with New York State, the Comptroller or NYSLRS.</p>
+    <p>The fund value here is a rough estimate. Nothing on this site should be taken as accurate, or as financial advice.</p>
+    <p>New York's constitution protects pension benefits once you're a member. A bad market day changes the fund, not the pension you've been promised.</p>
+    <button type="button" id="discOk">Got it, show me the carnage</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const back=document.getElementById("discBack"), K="disclaimerSeen";
+  function show(){ back.hidden=false; document.getElementById("discOk").focus(); }
+  function hide(){ back.hidden=true; try{ localStorage.setItem(K, String(Date.now())); }catch(e){} }
+  let seen=0; try{ seen=+localStorage.getItem(K)||0; }catch(e){}
+  if(Date.now()-seen > 7*864e5) show();
+  document.getElementById("discOk").addEventListener("click", hide);
+  document.getElementById("discAgain").addEventListener("click", e=>{ e.preventDefault(); show(); });
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !back.hidden) hide(); });
+})();
+</script>
+</body></html>
